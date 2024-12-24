@@ -17,6 +17,14 @@
     - [SQLAlchemy](https://www.sqlalchemy.org/) is the Python SQL toolkit and ORM we'll use to handle the lightweight sqlite database. You'll primarily work in `app.py` and can reference `models.py`.
     - [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross-origin requests from our frontend server.
 
+5. **Environment Variables**: - Inside folder backend, create .env file and add content as below
+```
+DB_NAME=trivia
+DB_USER=postgres
+DB_PASSWORD=password
+```
+
+
 ### Frontend Dependencies
 
 This project uses NPM to manage software dependencies. NPM comes packaged with Node. Before continuing, make sure you have Node installed.
@@ -47,6 +55,20 @@ flask run
 From within the frontend directory, run:
 ```bash
 npm start
+```
+
+**Trouble Shooting** - OpenSSL configuration in Node.js
+```bash
+cd frontend
+export NODE_OPTIONS=--openssl-legacy-provider
+```
+
+### Test
+```bash
+dropdb trivia_test
+createdb trivia_test
+psql trivia_test < trivia.psql
+python3 test_flaskr.py
 ```
 
 ## API Reference
