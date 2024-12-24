@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 from settings import DB_NAME, DB_USER, DB_PASSWORD
 
@@ -7,6 +7,10 @@ database_path = f'postgresql://{DB_USER}:{DB_PASSWORD}@{database_host}/{DB_NAME}
 
 db = SQLAlchemy()
 
+"""
+setup_db(app)
+    binds a flask application and a SQLAlchemy service
+"""
 def setup_db(app, database_path=database_path):
     if not hasattr(app, 'db_initialized'):
         app.config['SQLALCHEMY_DATABASE_URI'] = database_path
@@ -14,19 +18,22 @@ def setup_db(app, database_path=database_path):
         db.init_app(app)
         app.db_initialized = True
 
+"""
+Question
+"""
 class Question(db.Model):
     __tablename__ = 'questions'
 
     id = Column(Integer, primary_key=True)
     question = Column(String, nullable=False)
     answer = Column(String, nullable=False)
-    category_id = Column(Integer, ForeignKey('categories.id', ondelete='CASCADE'), nullable=False)
+    category = Column(String, nullable=False)
     difficulty = Column(Integer, nullable=False)
 
-    def __init__(self, question, answer, category_id, difficulty):
+    def __init__(self, question, answer, category, difficulty):
         self.question = question
         self.answer = answer
-        self.category_id = category_id
+        self.category = category
         self.difficulty = difficulty
 
     def insert(self):
@@ -45,16 +52,18 @@ class Question(db.Model):
             'id': self.id,
             'question': self.question,
             'answer': self.answer,
-            'category': self.category_id,
+            'category': self.category,
             'difficulty': self.difficulty
         }
 
+"""
+Category
+"""
 class Category(db.Model):
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)
     type = Column(String, nullable=False)
-    questions = db.relationship('Question', cascade="all, delete-orphan", backref='category', lazy=True)
 
     def __init__(self, type):
         self.type = type
